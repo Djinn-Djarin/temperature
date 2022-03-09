@@ -1,0 +1,45 @@
+<?php
+    include_once 'db_connect.php';
+    ?>
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Time', 'Temperature', 'Humidity'],
+          <?php
+           include_once 'db_connect.php';
+            $query= "SELECT * FROM `iot` ";
+            $res= mysqli_query($conn,$query);
+            while($data=mysqli_fetch_array($res)){
+                // $temperature = $data['year'];
+                $Time = $data['Time'];
+                $temperature = $data['temperature'];
+                $humidity = $data['humidity'];
+            ?>               
+               [ '<?php echo $Time;?>',<?php echo $temperature;?>, <?php echo $humidity; ?>],
+               <?php  
+            }?>  
+         
+        ]);
+
+        var options = {
+          title: 'Data Logger',
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="curve_chart" style="width: 900px; height: 500px"></div>
+  </body>
+</html>
